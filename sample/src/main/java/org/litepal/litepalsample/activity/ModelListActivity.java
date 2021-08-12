@@ -20,7 +20,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -40,72 +42,82 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 当前模型结构
+ */
 public class ModelListActivity extends AppCompatActivity {
+    private final List<String> mList = new ArrayList<>();
 
-    private List<String> mList = new ArrayList<>();
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, ModelListActivity.class);
+        context.startActivity(intent);
+    }
 
-	public static void actionStart(Context context) {
-		Intent intent = new Intent(context, ModelListActivity.class);
-		context.startActivity(intent);
-	}
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.model_list_layout);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.model_list_layout);
         ListView mModelListView = findViewById(R.id.model_listview);
-		populateMappingClasses();
+        populateMappingClasses();
         StringArrayAdapter mAdapter = new StringArrayAdapter(this, 0, mList);
         mModelListView.setAdapter(mAdapter);
         mModelListView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
-				ModelStructureActivity.actionStart(ModelListActivity.this, mList.get(index));
-			}
-		});
-	}
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View view, int index, long id) {
+                //跳转到某个模型的结构信息页面
+                ModelStructureActivity.actionStart(ModelListActivity.this, mList.get(index));
+            }
+        });
+    }
 
-	private void populateMappingClasses() {
-		try {
-			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-			XmlPullParser xmlPullParser = factory.newPullParser();
-			xmlPullParser.setInput(getInputStream(), "UTF-8");
-			int eventType = xmlPullParser.getEventType();
-			while (eventType != XmlPullParser.END_DOCUMENT) {
-				String nodeName = xmlPullParser.getName();
-				switch (eventType) {
-				case XmlPullParser.START_TAG: {
-					if ("mapping".equals(nodeName)) {
-						String className = xmlPullParser.getAttributeValue("", "class");
-						mList.add(className);
-					}
-					break;
-				}
-				default:
-					break;
-				}
-				eventType = xmlPullParser.next();
-			}
-		} catch (XmlPullParserException e) {
-			throw new ParseConfigurationFileException(
-					ParseConfigurationFileException.FILE_FORMAT_IS_NOT_CORRECT);
-		} catch (IOException e) {
-			throw new ParseConfigurationFileException(ParseConfigurationFileException.IO_EXCEPTION);
-		}
-	}
+    /**
+     * 从xml配置文件中获取所有模型的class名称
+     */
+    private void populateMappingClasses() {
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            XmlPullParser xmlPullParser = factory.newPullParser();
+            xmlPullParser.setInput(getInputStream(), "UTF-8");
+            int eventType = xmlPullParser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                String nodeName = xmlPullParser.getName();
+                switch (eventType) {
+                    case XmlPullParser.START_TAG: {
+                        //找到<mapping>标签
+                        if ("mapping".equals(nodeName)) {
+                            //获取标签上的class属性
+                            String className = xmlPullParser.getAttributeValue("", "class");
+                            mList.add(className);
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                eventType = xmlPullParser.next();
+            }
+        } catch (XmlPullParserException e) {
+            throw new ParseConfigurationFileException(
+                    ParseConfigurationFileException.FILE_FORMAT_IS_NOT_CORRECT);
+        } catch (IOException e) {
+            throw new ParseConfigurationFileException(ParseConfigurationFileException.IO_EXCEPTION);
+        }
+    }
 
-	private InputStream getInputStream() throws IOException {
-		AssetManager assetManager = LitePalApplication.getContext().getAssets();
-		String[] fileNames = assetManager.list("");
-		if (fileNames != null && fileNames.length > 0) {
-			for (String fileName : fileNames) {
-				if (Const.Config.CONFIGURATION_FILE_NAME.equalsIgnoreCase(fileName)) {
-					return assetManager.open(fileName, AssetManager.ACCESS_BUFFER);
-				}
-			}
-		}
-		throw new ParseConfigurationFileException(
-				ParseConfigurationFileException.CAN_NOT_FIND_LITEPAL_FILE);
-	}
-
+    /**
+     * 获取xml文件输入流
+     */
+    private InputStream getInputStream() throws IOException {
+        AssetManager assetManager = LitePalApplication.getContext().getAssets();
+        String[] fileNames = assetManager.list("");
+        if (fileNames != null && fileNames.length > 0) {
+            for (String fileName : fileNames) {
+                if (Const.Config.CONFIGURATION_FILE_NAME.equalsIgnoreCase(fileName)) {
+                    return assetManager.open(fileName, AssetManager.ACCESS_BUFFER);
+                }
+            }
+        }
+        throw new ParseConfigurationFileException(
+                ParseConfigurationFileException.CAN_NOT_FIND_LITEPAL_FILE);
+    }
 }

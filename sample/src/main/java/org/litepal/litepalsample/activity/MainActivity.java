@@ -17,7 +17,9 @@
 package org.litepal.litepalsample.activity;
 
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -25,36 +27,37 @@ import android.widget.Button;
 import org.litepal.litepalsample.R;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
-
     private static final String TAG = "MainActivity";
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_layout);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_layout);
         Button mManageTableBtn = findViewById(R.id.manage_table_btn);
         Button mCrudBtn = findViewById(R.id.crud_btn);
         Button mAggregateBtn = findViewById(R.id.aggregate_btn);
-		mManageTableBtn.setOnClickListener(this);
-		mCrudBtn.setOnClickListener(this);
-		mAggregateBtn.setOnClickListener(this);
-	}
+        mManageTableBtn.setOnClickListener(this);
+        mCrudBtn.setOnClickListener(this);
+        mAggregateBtn.setOnClickListener(this);
+    }
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.manage_table_btn:
-			ManageTablesActivity.actionStart(this);
-			break;
-		case R.id.crud_btn:
-			CRUDActivity.actionStart(this);
-			break;
-		case R.id.aggregate_btn:
-			AggregateActivity.actionStart(this);
-			break;
-		default:
-			break;
-		}
-	}
-
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.manage_table_btn:
+                //管理表
+                ManageTablesActivity.actionStart(this);
+                break;
+            case R.id.crud_btn:
+            	//增删查改
+                CRUDActivity.actionStart(this);
+                break;
+            case R.id.aggregate_btn:
+            	//聚合函数
+                AggregateActivity.actionStart(this);
+                break;
+            default:
+                break;
+        }
+    }
 }

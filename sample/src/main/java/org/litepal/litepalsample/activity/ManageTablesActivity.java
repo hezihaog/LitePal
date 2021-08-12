@@ -19,42 +19,47 @@ package org.litepal.litepalsample.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import org.litepal.litepalsample.R;
 
+/**
+ * 管理表
+ */
 public class ManageTablesActivity extends AppCompatActivity implements OnClickListener {
-
     public static void actionStart(Context context) {
-		Intent intent = new Intent(context, ManageTablesActivity.class);
-		context.startActivity(intent);
-	}
+        Intent intent = new Intent(context, ManageTablesActivity.class);
+        context.startActivity(intent);
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.manage_tables_layout);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.manage_tables_layout);
         Button mCurrentModelStructureBtn = findViewById(R.id.current_model_structure_btn);
         Button mOperateDatabaseBtn = findViewById(R.id.operate_database_btn);
-		mCurrentModelStructureBtn.setOnClickListener(this);
-		mOperateDatabaseBtn.setOnClickListener(this);
-	}
+        mCurrentModelStructureBtn.setOnClickListener(this);
+        mOperateDatabaseBtn.setOnClickListener(this);
+    }
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.current_model_structure_btn:
-			ModelListActivity.actionStart(this);
-			break;
-		case R.id.operate_database_btn:
-			TableListActivity.actionStart(this);
-			break;
-		default:
-			break;
-		}
-	}
-
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.current_model_structure_btn:
+                //当前模型结构
+                ModelListActivity.actionStart(this);
+                break;
+            case R.id.operate_database_btn:
+                //当前表结构
+                TableListActivity.actionStart(this);
+                break;
+            default:
+                break;
+        }
+    }
 }

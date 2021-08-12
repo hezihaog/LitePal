@@ -19,7 +19,9 @@ package org.litepal.litepalsample.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,74 +38,87 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 模型的结构信息
+ */
 public class ModelStructureActivity extends AppCompatActivity {
+    public static final String CLASS_NAME = "class_name";
 
-	public static final String CLASS_NAME = "class_name";
-
+    /**
+     * 当前要分析的模型全类名
+     */
     private String mClassName;
 
-	private List<Field> mList = new ArrayList<>();
+    private final List<Field> mList = new ArrayList<>();
 
-	public static void actionStart(Context context, String className) {
-		Intent intent = new Intent(context, ModelStructureActivity.class);
-		intent.putExtra(CLASS_NAME, className);
-		context.startActivity(intent);
-	}
+    public static void actionStart(Context context, String className) {
+        Intent intent = new Intent(context, ModelStructureActivity.class);
+        intent.putExtra(CLASS_NAME, className);
+        context.startActivity(intent);
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.model_structure_layout);
-		mClassName = getIntent().getStringExtra(CLASS_NAME);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.model_structure_layout);
+        //获取传过来的模型全类名
+        mClassName = getIntent().getStringExtra(CLASS_NAME);
         ListView mModelStructureListView = findViewById(R.id.model_structure_listview);
-		analyzeModelStructure();
+        //分析模型结构
+        analyzeModelStructure();
         ArrayAdapter<Field> mAdapter = new MyArrayAdapter(this, 0, mList);
-		mModelStructureListView.setAdapter(mAdapter);
-	}
+        mModelStructureListView.setAdapter(mAdapter);
+    }
 
-	private void analyzeModelStructure() {
-		Class<?> dynamicClass = null;
-		try {
-			dynamicClass = Class.forName(mClassName);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		Field[] fields = dynamicClass.getDeclaredFields();
-		for (Field field : fields) {
-			int modifiers = field.getModifiers();
-			if (Modifier.isPrivate(modifiers) && !Modifier.isStatic(modifiers)) {
-				Class<?> fieldTypeClass = field.getType();
-				String fieldType = fieldTypeClass.getName();
-				if (BaseUtility.isFieldTypeSupported(fieldType)) {
-					mList.add(field);
-				}
-			}
-		}
-	}
+    /**
+     * 分析模型结构
+     */
+    private void analyzeModelStructure() {
+        Class<?> dynamicClass = null;
+        try {
+            //根据全类名获取Class对象
+            dynamicClass = Class.forName(mClassName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        //反射获取Class的所有字段
+        Field[] fields = dynamicClass.getDeclaredFields();
+        //遍历字段
+        for (Field field : fields) {
+            int modifiers = field.getModifiers();
+            //字段是私有的，并且不能是static静态变量
+            if (Modifier.isPrivate(modifiers) && !Modifier.isStatic(modifiers)) {
+                //获取字段类型
+                Class<?> fieldTypeClass = field.getType();
+                String fieldType = fieldTypeClass.getName();
+                //判断是否是支持的字段类型
+                if (BaseUtility.isFieldTypeSupported(fieldType)) {
+                    mList.add(field);
+                }
+            }
+        }
+    }
 
-	class MyArrayAdapter extends ArrayAdapter<Field> {
+    static class MyArrayAdapter extends ArrayAdapter<Field> {
+        public MyArrayAdapter(Context context, int textViewResourceId, List<Field> objects) {
+            super(context, textViewResourceId, objects);
+        }
 
-		public MyArrayAdapter(Context context, int textViewResourceId, List<Field> objects) {
-			super(context, textViewResourceId, objects);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View view;
-			Field field = getItem(position);
-			if (convertView == null) {
-				view = LayoutInflater.from(getContext()).inflate(R.layout.model_structure_item, null);
-			} else {
-				view = convertView;
-			}
-			TextView text1 = view.findViewById(R.id.text_1);
-			text1.setText(field.getName());
-			TextView text2 = view.findViewById(R.id.text_2);
-			text2.setText(field.getType().getName());
-			return view;
-		}
-
-	}
-
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+            Field field = getItem(position);
+            if (convertView == null) {
+                view = LayoutInflater.from(getContext()).inflate(R.layout.model_structure_item, null);
+            } else {
+                view = convertView;
+            }
+            TextView text1 = view.findViewById(R.id.text_1);
+            text1.setText(field.getName());
+            TextView text2 = view.findViewById(R.id.text_2);
+            text2.setText(field.getType().getName());
+            return view;
+        }
+    }
 }
