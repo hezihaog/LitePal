@@ -20,7 +20,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -38,128 +40,139 @@ import org.litepal.tablemanager.Connector;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * CRUD-删除
+ */
 public class DeleteSampleActivity extends AppCompatActivity implements OnClickListener {
+    private EditText mSingerIdEdit;
 
-	private EditText mSingerIdEdit;
+    private EditText mNameToDeleteEdit;
 
-	private EditText mNameToDeleteEdit;
+    private EditText mAgeToDeleteEdit;
 
-	private EditText mAgeToDeleteEdit;
-
-	private ProgressBar mProgressBar;
+    private ProgressBar mProgressBar;
 
     private DataArrayAdapter mAdapter;
 
-	private List<List<String>> mList = new ArrayList<>();
+    private final List<List<String>> mList = new ArrayList<>();
 
-	public static void actionStart(Context context) {
-		Intent intent = new Intent(context, DeleteSampleActivity.class);
-		context.startActivity(intent);
-	}
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, DeleteSampleActivity.class);
+        context.startActivity(intent);
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.delete_sample_layout);
-		mProgressBar = findViewById(R.id.progress_bar);
-		mSingerIdEdit = findViewById(R.id.singer_id_edit);
-		mNameToDeleteEdit = findViewById(R.id.name_to_delete);
-		mAgeToDeleteEdit = findViewById(R.id.age_to_delete);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.delete_sample_layout);
+        mProgressBar = findViewById(R.id.progress_bar);
+        mSingerIdEdit = findViewById(R.id.singer_id_edit);
+        mNameToDeleteEdit = findViewById(R.id.name_to_delete);
+        mAgeToDeleteEdit = findViewById(R.id.age_to_delete);
         Button mDeleteBtn1 = findViewById(R.id.delete_btn1);
         Button mDeleteBtn2 = findViewById(R.id.delete_btn2);
         ListView mDataListView = findViewById(R.id.data_list_view);
-		mDeleteBtn1.setOnClickListener(this);
-		mDeleteBtn2.setOnClickListener(this);
-		mAdapter = new DataArrayAdapter(this, 0, mList);
-		mDataListView.setAdapter(mAdapter);
-		populateDataFromDB();
-	}
+        mDeleteBtn1.setOnClickListener(this);
+        mDeleteBtn2.setOnClickListener(this);
+        mAdapter = new DataArrayAdapter(this, 0, mList);
+        mDataListView.setAdapter(mAdapter);
+        //查询表数据
+        populateDataFromDB();
+    }
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.delete_btn1:
-			try {
-				int rowsAffected = LitePal.delete(Singer.class,
-						Long.parseLong(mSingerIdEdit.getText().toString()));
-				Toast.makeText(
-						this,
-						String.format(getString(R.string.number_of_rows_affected),
-								String.valueOf(rowsAffected)), Toast.LENGTH_SHORT).show();
-				populateDataFromDB();
-			} catch (Exception e) {
-				e.printStackTrace();
-				Toast.makeText(this, getString(R.string.error_param_is_not_valid),
-						Toast.LENGTH_SHORT).show();
-			}
-			break;
-		case R.id.delete_btn2:
-			try {
-				int rowsAffected = LitePal.deleteAll(Singer.class, "name=? and age=?",
-						mNameToDeleteEdit.getText().toString(), mAgeToDeleteEdit.getText()
-								.toString());
-				Toast.makeText(
-						this,
-						String.format(getString(R.string.number_of_rows_affected),
-								String.valueOf(rowsAffected)), Toast.LENGTH_SHORT).show();
-				populateDataFromDB();
-			} catch (Exception e) {
-				e.printStackTrace();
-				Toast.makeText(this, getString(R.string.error_param_is_not_valid),
-						Toast.LENGTH_SHORT).show();
-			}
-			break;
-		default:
-			break;
-		}
-	}
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.delete_btn1:
+                try {
+                    //删除指定id的数据
+                    int rowsAffected = LitePal.delete(Singer.class,
+                            Long.parseLong(mSingerIdEdit.getText().toString()));
+                    //Toast指定行数
+                    Toast.makeText(
+                            this,
+                            String.format(getString(R.string.number_of_rows_affected),
+                                    String.valueOf(rowsAffected)), Toast.LENGTH_SHORT).show();
+                    //刷新列表
+                    populateDataFromDB();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, getString(R.string.error_param_is_not_valid),
+                            Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.delete_btn2:
+                try {
+                    //带条件的删除，第一个参数为条件占位符，后面的条件为占位符对应的值
+                    int rowsAffected = LitePal.deleteAll(Singer.class, "name=? and age=?",
+                            mNameToDeleteEdit.getText().toString(), mAgeToDeleteEdit.getText()
+                                    .toString());
+                    //Toast影响行数
+                    Toast.makeText(
+                            this,
+                            String.format(getString(R.string.number_of_rows_affected),
+                                    String.valueOf(rowsAffected)), Toast.LENGTH_SHORT).show();
+                    //刷新列表
+                    populateDataFromDB();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, getString(R.string.error_param_is_not_valid),
+                            Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
-	private void populateDataFromDB() {
-		mProgressBar.setVisibility(View.VISIBLE);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				mList.clear();
-				List<String> columnList = new ArrayList<String>();
-				columnList.add("id");
-				columnList.add("name");
-				columnList.add("age");
-				columnList.add("ismale");
-				mList.add(columnList);
-				Cursor cursor = null;
-				try {
-					cursor = Connector.getDatabase().rawQuery("select * from singer order by id",
-							null);
-					if (cursor.moveToFirst()) {
-						do {
-							long id = cursor.getLong(cursor.getColumnIndex("id"));
-							String name = cursor.getString(cursor.getColumnIndex("name"));
-							int age = cursor.getInt(cursor.getColumnIndex("age"));
-							int isMale = cursor.getInt(cursor.getColumnIndex("ismale"));
-							List<String> stringList = new ArrayList<String>();
-							stringList.add(String.valueOf(id));
-							stringList.add(name);
-							stringList.add(String.valueOf(age));
-							stringList.add(String.valueOf(isMale));
-							mList.add(stringList);
-						} while (cursor.moveToNext());
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					if (cursor != null) {
-						cursor.close();
-					}
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							mProgressBar.setVisibility(View.GONE);
-							mAdapter.notifyDataSetChanged();
-						}
-					});
-				}
-			}
-		}).start();
-	}
-
+    /**
+     * 查询表数据
+     */
+    private void populateDataFromDB() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mList.clear();
+                List<String> columnList = new ArrayList<String>();
+                columnList.add("id");
+                columnList.add("name");
+                columnList.add("age");
+                columnList.add("ismale");
+                mList.add(columnList);
+                Cursor cursor = null;
+                try {
+                    cursor = Connector.getDatabase().rawQuery("select * from singer order by id",
+                            null);
+                    if (cursor.moveToFirst()) {
+                        do {
+                            long id = cursor.getLong(cursor.getColumnIndex("id"));
+                            String name = cursor.getString(cursor.getColumnIndex("name"));
+                            int age = cursor.getInt(cursor.getColumnIndex("age"));
+                            int isMale = cursor.getInt(cursor.getColumnIndex("ismale"));
+                            List<String> stringList = new ArrayList<String>();
+                            stringList.add(String.valueOf(id));
+                            stringList.add(name);
+                            stringList.add(String.valueOf(age));
+                            stringList.add(String.valueOf(isMale));
+                            mList.add(stringList);
+                        } while (cursor.moveToNext());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setVisibility(View.GONE);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
 }

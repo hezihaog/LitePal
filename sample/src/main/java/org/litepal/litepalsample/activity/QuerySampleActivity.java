@@ -19,21 +19,23 @@ package org.litepal.litepalsample.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.litepal.litepalsample.R;
 
+/**
+ * CRUD-查询
+ */
 public class QuerySampleActivity extends AppCompatActivity {
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, QuerySampleActivity.class);
+        context.startActivity(intent);
+    }
 
-	public static void actionStart(Context context) {
-		Intent intent = new Intent(context, QuerySampleActivity.class);
-		context.startActivity(intent);
-	}
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.query_sample_layout);
-	}
-
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.query_sample_layout);
+    }
 }
