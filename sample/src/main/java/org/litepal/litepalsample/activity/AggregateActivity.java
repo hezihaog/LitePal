@@ -73,7 +73,7 @@ public class AggregateActivity extends AppCompatActivity implements OnClickListe
                 AverageSampleActivity.actionStart(this);
                 break;
             case R.id.sum_sample_btn:
-                //总数
+                //求和
                 SumSampleActivity.actionStart(this);
                 break;
             default:

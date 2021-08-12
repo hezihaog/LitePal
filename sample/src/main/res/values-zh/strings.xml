@@ -43,7 +43,7 @@
     <string name="max_sample">最大值 Sample</string>
     <string name="min_sample">最小值 Sample</string>
     <string name="average_sample">平均数 Sample</string>
-    <string name="sum_sample">总数 Sample</string>
+    <string name="sum_sample">求和 Sample</string>
     <string name="run_codes_above">运行上面的代码</string>
     <string name="sample_codes_first_line">Singer singer = new Singer&#040;&#041;&#059;</string>
     <string name="sample_codes_second_line_pre">singer.setName&#040;\&#034;</string>

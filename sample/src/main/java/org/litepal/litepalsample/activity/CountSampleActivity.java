@@ -62,12 +62,12 @@ public class CountSampleActivity extends AppCompatActivity implements OnClickLis
         int result = 0;
         switch (view.getId()) {
             case R.id.count_btn1:
-                //查询总数
+                //求和
                 result = LitePal.count(Singer.class);
                 mResultText.setText(String.valueOf(result));
                 break;
             case R.id.count_btn2:
-                //带条件统计总数
+                //带条件统计的求和
                 try {
                     result = LitePal.where("age > ?", mAgeEdit.getText().toString()).count(
                             Singer.class);

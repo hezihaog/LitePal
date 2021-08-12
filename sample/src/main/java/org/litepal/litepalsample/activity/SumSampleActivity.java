@@ -33,7 +33,7 @@ import org.litepal.litepalsample.R;
 import org.litepal.litepalsample.model.Singer;
 
 /**
- * 聚合函数-总数
+ * 聚合函数-求和
  */
 public class SumSampleActivity extends AppCompatActivity implements OnClickListener {
     private EditText mAgeEdit;
