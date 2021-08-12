@@ -19,7 +19,9 @@ package org.litepal.litepalsample.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -30,48 +32,51 @@ import org.litepal.LitePal;
 import org.litepal.litepalsample.R;
 import org.litepal.litepalsample.model.Singer;
 
+/**
+ * 聚合函数-最大值
+ */
 public class MaxSampleActivity extends AppCompatActivity implements OnClickListener {
-
     private EditText mAgeEdit;
 
-	private TextView mResultText;
+    private TextView mResultText;
 
-	public static void actionStart(Context context) {
-		Intent intent = new Intent(context, MaxSampleActivity.class);
-		context.startActivity(intent);
-	}
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, MaxSampleActivity.class);
+        context.startActivity(intent);
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.max_sample_layout);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.max_sample_layout);
         Button mMaxBtn1 = findViewById(R.id.max_btn1);
         Button mMaxBtn2 = findViewById(R.id.max_btn2);
-		mAgeEdit = findViewById(R.id.age_edit);
-		mResultText = findViewById(R.id.result_text);
-		mMaxBtn1.setOnClickListener(this);
-		mMaxBtn2.setOnClickListener(this);
-	}
+        mAgeEdit = findViewById(R.id.age_edit);
+        mResultText = findViewById(R.id.result_text);
+        mMaxBtn1.setOnClickListener(this);
+        mMaxBtn2.setOnClickListener(this);
+    }
 
-	@Override
-	public void onClick(View view) {
-		int result = 0;
-		switch (view.getId()) {
-		case R.id.max_btn1:
-			result = LitePal.max(Singer.class, "age", Integer.TYPE);
-			mResultText.setText(String.valueOf(result));
-			break;
-		case R.id.max_btn2:
-			try {
-				result = LitePal.where("age < ?", mAgeEdit.getText().toString()).max(
-						Singer.class, "age", Integer.TYPE);
-				mResultText.setText(String.valueOf(result));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			break;
-		default:
-		}
-	}
-
+    @Override
+    public void onClick(View view) {
+        int result = 0;
+        switch (view.getId()) {
+            case R.id.max_btn1:
+                //找出最大年龄
+                result = LitePal.max(Singer.class, "age", Integer.TYPE);
+                mResultText.setText(String.valueOf(result));
+                break;
+            case R.id.max_btn2:
+                //找出年龄小于23岁的人中的最大年龄的人的年龄
+                try {
+                    result = LitePal.where("age < ?", mAgeEdit.getText().toString()).max(
+                            Singer.class, "age", Integer.TYPE);
+                    mResultText.setText(String.valueOf(result));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+        }
+    }
 }

@@ -42,7 +42,7 @@
     <string name="count_sample">统计 Sample</string>
     <string name="max_sample">最大值 Sample</string>
     <string name="min_sample">最小值 Sample</string>
-    <string name="average_sample">聚合函数 Sample</string>
+    <string name="average_sample">平均数 Sample</string>
     <string name="sum_sample">总数 Sample</string>
     <string name="run_codes_above">运行上面的代码</string>
     <string name="sample_codes_first_line">Singer singer = new Singer&#040;&#041;&#059;</string>

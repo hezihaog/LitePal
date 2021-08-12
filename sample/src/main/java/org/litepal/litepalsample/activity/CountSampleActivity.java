@@ -19,7 +19,9 @@ package org.litepal.litepalsample.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -30,48 +32,51 @@ import org.litepal.LitePal;
 import org.litepal.litepalsample.R;
 import org.litepal.litepalsample.model.Singer;
 
+/**
+ * 聚合函数-统计
+ */
 public class CountSampleActivity extends AppCompatActivity implements OnClickListener {
-
     private EditText mAgeEdit;
 
-	private TextView mResultText;
+    private TextView mResultText;
 
-	public static void actionStart(Context context) {
-		Intent intent = new Intent(context, CountSampleActivity.class);
-		context.startActivity(intent);
-	}
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, CountSampleActivity.class);
+        context.startActivity(intent);
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.count_sample_layout);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.count_sample_layout);
         Button mCountBtn1 = findViewById(R.id.count_btn1);
         Button mCountBtn2 = findViewById(R.id.count_btn2);
-		mAgeEdit = findViewById(R.id.age_edit);
-		mResultText = findViewById(R.id.result_text);
-		mCountBtn1.setOnClickListener(this);
-		mCountBtn2.setOnClickListener(this);
-	}
+        mAgeEdit = findViewById(R.id.age_edit);
+        mResultText = findViewById(R.id.result_text);
+        mCountBtn1.setOnClickListener(this);
+        mCountBtn2.setOnClickListener(this);
+    }
 
-	@Override
-	public void onClick(View view) {
-		int result = 0;
-		switch (view.getId()) {
-		case R.id.count_btn1:
-			result = LitePal.count(Singer.class);
-			mResultText.setText(String.valueOf(result));
-			break;
-		case R.id.count_btn2:
-			try {
-				result = LitePal.where("age > ?", mAgeEdit.getText().toString()).count(
-						Singer.class);
-				mResultText.setText(String.valueOf(result));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			break;
-		default:
-		}
-	}
-
+    @Override
+    public void onClick(View view) {
+        int result = 0;
+        switch (view.getId()) {
+            case R.id.count_btn1:
+                //查询总数
+                result = LitePal.count(Singer.class);
+                mResultText.setText(String.valueOf(result));
+                break;
+            case R.id.count_btn2:
+                //带条件统计总数
+                try {
+                    result = LitePal.where("age > ?", mAgeEdit.getText().toString()).count(
+                            Singer.class);
+                    mResultText.setText(String.valueOf(result));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+        }
+    }
 }
